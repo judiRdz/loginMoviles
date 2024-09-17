@@ -28,5 +28,58 @@ namespace loginMoviles.Controllers
             return Ok();
         }
 
+        [HttpGet("{id:int}", Name = "ObtenerDepartamento")]
+        public async Task<ActionResult<Departamento>> GetObtenerDepartamento(int id)
+        {
+            var depto = await context.Departamentos.FirstOrDefaultAsync(x => x.Id == id);
+            if (depto == null)
+                return NotFound();
+
+            return Ok(depto);
+        }
+
+        [HttpGet("ListarDepartamentos")]
+        public async Task<ActionResult<List<Departamento>>> ListarDepartamentos()
+        {
+            var departamento = await context.Departamentos.ToListAsync();
+            if (departamento == null)
+                return NotFound();
+
+            return Ok(departamento);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> PutModificarDepto(int id, Departamento departamento)
+        {
+            var deptoExiste = await context.Departamentos.FirstOrDefaultAsync(x=>x.Id == id);
+
+            if (deptoExiste == null)
+                return NotFound();
+
+
+            deptoExiste.Nombre = departamento.Nombre;
+            deptoExiste.Descripcion = departamento.Descripcion;
+
+            //Automapper se utiliza para cuando son muchos atributos
+            
+
+            context.Update(departamento);
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Eliminar(int id)
+        {
+            var eliminarDpto = context.Departamentos.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (eliminarDpto == null)
+                return NotFound();
+
+            context.Remove(eliminarDpto);
+            await context.SaveChangesAsync();
+            return NoContent();
+            
+        }
     }
 }
